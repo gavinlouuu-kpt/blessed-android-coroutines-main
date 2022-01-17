@@ -92,12 +92,6 @@ class MainActivity : AppCompatActivity() {
         val bluetoothHandler = getInstance(applicationContext)
 
         collectBloodPressure(bluetoothHandler)
-        collectHeartRate(bluetoothHandler)
-        collectGlucose(bluetoothHandler)
-        collectPulseOxContinuous(bluetoothHandler)
-        collectPulseOxSpot(bluetoothHandler)
-        collectTemperature(bluetoothHandler)
-        collectWeight(bluetoothHandler)
     }
 
     private fun collectBloodPressure(bluetoothHandler: BluetoothHandler) {
@@ -106,106 +100,35 @@ class MainActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     measurementValue!!.text = String.format(
                         Locale.ENGLISH,
-                        "%.0f/%.0f %s, %.0f bpm\n%s\n",
+                        "%s",
                         it.systolic,
-                        it.diastolic,
-                        if (it.unit == ObservationUnit.MMHG) "mmHg" else "kpa",
-                        it.pulseRate,
-                        dateFormat.format(it.timestamp ?: Calendar.getInstance())
+//                        it.diastolic,
+//                        if (it.unit == ObservationUnit.MMHG) "mmHg" else "kpa",
+//                        it.pulseRate,
+//                        dateFormat.format(it.timestamp ?: Calendar.getInstance())
                     )
                 }
             }
         }
     }
+//    private fun collectBloodPressure(bluetoothHandler: BluetoothHandler) {
+//        scope.launch {
+//            bluetoothHandler.bloodpressureChannel.consumeAsFlow().collect {
+//                withContext(Dispatchers.Main) {
+//                    measurementValue!!.text = String.format(
+//                        Locale.ENGLISH,
+//                        "%.0f/%.0f %s, %.0f bpm\n%s\n",
+//                        it.systolic,
+//                        it.diastolic,
+//                        if (it.unit == ObservationUnit.MMHG) "mmHg" else "kpa",
+//                        it.pulseRate,
+//                        dateFormat.format(it.timestamp ?: Calendar.getInstance())
+//                    )
+//                }
+//            }
+//        }
+//    }
 
-    private fun collectGlucose(bluetoothHandler: BluetoothHandler) {
-        scope.launch {
-            bluetoothHandler.glucoseChannel.consumeAsFlow().collect {
-                withContext(Dispatchers.Main) {
-                    measurementValue!!.text = String.format(
-                        Locale.ENGLISH,
-                        "%.1f %s\n%s\n",
-                        it.value,
-                        if (it.unit === ObservationUnit.MmolPerLiter) "mmol/L" else "mg/dL",
-                        dateFormat.format(it.timestamp ?: Calendar.getInstance()),
-                    )
-                }
-            }
-        }
-    }
-
-    private fun collectHeartRate(bluetoothHandler: BluetoothHandler) {
-        scope.launch {
-            bluetoothHandler.heartRateChannel.consumeAsFlow().collect {
-                withContext(Dispatchers.Main) {
-                    measurementValue?.text = String.format(Locale.ENGLISH, "%d bpm", it.pulse)
-                }
-            }
-        }
-    }
-
-    private fun collectPulseOxContinuous(bluetoothHandler: BluetoothHandler) {
-        scope.launch {
-            bluetoothHandler.pulseOxContinuousChannel.consumeAsFlow().collect {
-                withContext(Dispatchers.Main) {
-                    measurementValue!!.text = String.format(
-                        Locale.ENGLISH,
-                        "SpO2 %d%%,  Pulse %d bpm\n%s\n\nfrom %s",
-                        it.spO2,
-                        it.pulseRate,
-                        dateFormat.format(Calendar.getInstance())
-                    )
-                }
-            }
-        }
-    }
-
-    private fun collectPulseOxSpot(bluetoothHandler: BluetoothHandler) {
-        scope.launch {
-            bluetoothHandler.pulseOxSpotChannel.consumeAsFlow().collect {
-                withContext(Dispatchers.Main) {
-                    measurementValue!!.text = String.format(
-                        Locale.ENGLISH,
-                        "SpO2 %d%%,  Pulse %d bpm\n",
-                        it.spO2,
-                        it.pulseRate
-                    )
-                }
-            }
-        }
-    }
-
-    private fun collectTemperature(bluetoothHandler: BluetoothHandler) {
-        scope.launch {
-            bluetoothHandler.temperatureChannel.consumeAsFlow().collect {
-                withContext(Dispatchers.Main) {
-                    measurementValue?.text = String.format(
-                        Locale.ENGLISH,
-                        "%.1f %s (%s)\n%s\n",
-                        it.temperatureValue,
-                        if (it.unit == ObservationUnit.Celsius) "celsius" else "fahrenheit",
-                        it.type,
-                        dateFormat.format(it.timestamp ?: Calendar.getInstance())
-                    )
-                }
-            }
-        }
-    }
-
-    private fun collectWeight(bluetoothHandler: BluetoothHandler) {
-        scope.launch {
-            bluetoothHandler.weightChannel.consumeAsFlow().collect {
-                withContext(Dispatchers.Main) {
-                    measurementValue!!.text = String.format(
-                        Locale.ENGLISH,
-                        "%.1f %s\n%s\n",
-                        it.weight, it.unit.toString(),
-                        dateFormat.format(it.timestamp ?: Calendar.getInstance())
-                    )
-                }
-            }
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()
